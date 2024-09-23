@@ -21,7 +21,7 @@ namespace StudentuInformacineSistema.Tests
             _context = new StudentsContext(options);
             _context.Database.EnsureCreated();
 
-            var studentRepository = new StudentRepository(_context); // Assuming StudentRepository implements IStudentRepository
+            var studentRepository = new StudentRepository(_context); 
             _studentService = new StudentService(studentRepository);
         }
 
