@@ -47,7 +47,7 @@ namespace StudentuInformacineSistema.Tests
             var result = _studentService.CreateStudent(student);
 
             // Assert
-            Assert.IsFalse(result, "Student creation should fail due to invalid first name with a number.");
+            Assert.IsFalse(result, "Neteisingas FirstName.");
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace StudentuInformacineSistema.Tests
             var result = _studentService.CreateStudent(student);
 
             // Assert
-            Assert.IsFalse(result, "Student creation should fail due to too short first name.");
+            Assert.IsFalse(result, "Neteisingas FistName.");
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace StudentuInformacineSistema.Tests
             // Arrange
             var student = new Student
             {
-                FirstName = "JohnathonJohnathonJohnathonJohnathonJohnathon", 
+                FirstName = "JohnathonJohnathonJohnathonJohnathonJohnathodfgagfdfn", 
                 LastName = "Smith",
                 StudentNumber = 12345680,
                 Email = "john.smith@example.com"
@@ -85,7 +85,7 @@ namespace StudentuInformacineSistema.Tests
             var result = _studentService.CreateStudent(student);
 
             // Assert
-            Assert.IsFalse(result, "Student creation should fail due to too long first name.");
+            Assert.IsFalse(result, "Neteisingas FistName.");
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace StudentuInformacineSistema.Tests
             var result = _studentService.CreateStudent(student);
 
             // Assert
-            Assert.IsFalse(result, "Student creation should fail due to invalid last name with a special character.");
+            Assert.IsFalse(result, "Neteisingas LastName.");
         }
     }
 }
