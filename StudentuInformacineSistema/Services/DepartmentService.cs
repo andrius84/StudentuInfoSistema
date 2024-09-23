@@ -29,7 +29,7 @@ namespace StudentuInformacineSistema.Services
             // Patikriname ar departamentas turi unikalu kodą
             if (_departmentRepository.GetDepartments().Any(d => d.DepartmentCode == department.DepartmentCode))
             {
-                return false; // Duplicate department code
+                return false; 
             }
 
             _departmentRepository.AddDepartment(department);
@@ -55,7 +55,7 @@ namespace StudentuInformacineSistema.Services
             return true;
         }
 
-        // Validation for the department code
+        // Patikriname ar departamento kodas atitinka reikalavimus
         private bool ValidateDepartamentCode(string code)
         {
             if (string.IsNullOrWhiteSpace(code) || code.Length != 6 || !Regex.IsMatch(code, @"^[a-zA-Z0-9]+$"))

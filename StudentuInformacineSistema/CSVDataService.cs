@@ -11,7 +11,7 @@ namespace StudentuInformacineSistema
     {
         public static List<Department> GetDepartments()
         {
-            var csv = File.ReadAllLines("../../../Database/InitialData/departments.csv");
+            var csv = File.ReadAllLines("Database/InitialData/departments.csv");
             var departments = new List<Department>();
             foreach (var line in csv.Skip(1))
             {
@@ -29,7 +29,6 @@ namespace StudentuInformacineSistema
         {
             Console.WriteLine(Directory.GetCurrentDirectory());
 
-            //var path = "C:\\StudentuInformacineSistema\\StudentuInformacineSistema\\Database\\InitialData\\students.csv";
             var csv = File.ReadAllLines("../../../Database/InitialData/students.csv");
             var students = new List<Student>();
             foreach (var line in csv.Skip(1))

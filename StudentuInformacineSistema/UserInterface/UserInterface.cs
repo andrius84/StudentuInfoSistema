@@ -30,20 +30,32 @@ namespace StudentuInformacineSistema.UserInterface
             var option = Console.ReadLine();
             switch (option)
             {
-                case "1"://ok
+                case "1":
                     var department = CreateDepartment();
+                    if ( department == null)
+                    {
+                        break;
+                    }
                     AddStudentsOrExistLecturesToDepartment(department);
                     break;
-                case "2"://ok
+                case "2":
                     AddStudentsAndLecturesToExistDepartment();
                     break;
-                case "3"://ok
+                case "3":
                     var lecture3 = CreateLecture();
+                    if (lecture3 == null)
+                    {
+                        break;
+                    }
                     var choosedDepartment3 = ChooseDepartment();
                     AddLectureToDepartment(choosedDepartment3, lecture3);
                     break;
-                case "4"://ok
+                case "4":
                     var student4 = CreateStudent();
+                    if (student4 == null)
+                    {
+                        break;
+                    }
                     var choosedDepartment4 = ChooseDepartment();
                     AddStudentToDepartment(choosedDepartment4, student4);
                     AddExistLectureToStudent(student4.StudentNumber);
@@ -91,6 +103,9 @@ namespace StudentuInformacineSistema.UserInterface
             else
             {
                 Console.WriteLine("Departamento sukurti nepavyko, patikrinkite ar įvedėte teisingus duomenis");
+                Console.ReadKey();
+                department.DepartmentCode = null;
+                return department.DepartmentCode;
             }
             Console.ReadKey();
 
@@ -116,6 +131,9 @@ namespace StudentuInformacineSistema.UserInterface
             else
             {
                 Console.WriteLine("Paskaitos sukurti nepavyko, patikrinkite ar įvedėte teisingus duomenis");
+                Console.ReadKey();
+                lecture = null;
+                return lecture;
             }
             Console.ReadKey();
             return lecture;
@@ -146,6 +164,9 @@ namespace StudentuInformacineSistema.UserInterface
             else
             {
                 Console.WriteLine("Studento sukurti nepavyko, patikrinkite ar įvedėte teisingus duomenis");
+                Console.ReadKey();
+                student = null;
+                return student;
             }
             Console.ReadKey();
             return student;

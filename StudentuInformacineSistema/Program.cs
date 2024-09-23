@@ -28,8 +28,8 @@ namespace StudentuInformacineSistema
 
             IUserInterface userInterface = new UserInterface.UserInterface(departmentService, lectureService, studentService);
 
-            studentsContext.Database.EnsureDeleted();
-            studentsContext.Database.EnsureCreated();
+            //studentsContext.Database.EnsureDeleted();
+            //studentsContext.Database.EnsureCreated();
 
             while (true)
             {

@@ -13,6 +13,7 @@ namespace StudentuInformacineSistema.Services.Interfaces
         List<Department> GetDepartments();
         Department GetDepartmentByCode(string code);
         bool AddLectureToDepartmen(string departmentCode, string lectureName);
+        
 
     }
 }

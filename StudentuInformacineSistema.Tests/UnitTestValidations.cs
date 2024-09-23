@@ -35,10 +35,9 @@ namespace StudentuInformacineSistema.Tests
         [TestMethod]
         public void CreateStudent_InvalidFirstNameWithNumber_ShouldReturnFalse()
         {
-            // Arrange
             var student = new Student
             {
-                FirstName = "Jo1n", // Invalid name (contains a number)
+                FirstName = "Jo1n",
                 LastName = "Smith",
                 StudentNumber = 12345678,
                 Email = "john.smith@example.com"
@@ -57,7 +56,7 @@ namespace StudentuInformacineSistema.Tests
             // Arrange
             var student = new Student
             {
-                FirstName = "J", // Invalid name (less than 2 characters)
+                FirstName = "J", 
                 LastName = "Smith",
                 StudentNumber = 12345679,
                 Email = "john.smith@example.com"
@@ -76,7 +75,7 @@ namespace StudentuInformacineSistema.Tests
             // Arrange
             var student = new Student
             {
-                FirstName = "JohnathonJohnathonJohnathonJohnathonJohnathon", // 51 characters
+                FirstName = "JohnathonJohnathonJohnathonJohnathonJohnathon", 
                 LastName = "Smith",
                 StudentNumber = 12345680,
                 Email = "john.smith@example.com"
@@ -96,7 +95,7 @@ namespace StudentuInformacineSistema.Tests
             var student = new Student
             {
                 FirstName = "John",
-                LastName = "Sm!th", // Invalid last name (contains a special character)
+                LastName = "Sm!th", 
                 StudentNumber = 12345681,
                 Email = "john.smith@example.com"
             };
