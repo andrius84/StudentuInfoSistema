@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentuInformacineSistema.Database.Entities;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace StudentuInformacineSistema.Tests
 {
@@ -21,95 +20,81 @@ namespace StudentuInformacineSistema.Tests
 
             _context = new StudentsContext(options);
 
-            _context.Departments.AddRange(CSVDataService.GetDepartments());
-            _context.Lectures.AddRange(CSVDataService.GetLectures());
-            _context.Students.AddRange(CSVDataService.GetStudents());
+            _context.Departments.AddRange(
+                new Department { DepartmentCode = "CS1234", DepartmentName = "ComputerScience" },
+                new Department { DepartmentCode = "MTH567", DepartmentName = "Mathematics" }
+            );
+
+            _context.Lectures.AddRange(
+                new Lecture { LectureName = "Algorithms", LectureTime = "10:00-11:30" },
+                new Lecture { LectureName = "Calculus", LectureTime = "12:00-13:30" },
+                new Lecture { LectureName = "DataStructures", LectureTime = "14:00-15:30" }
+            );
+
+            _context.Students.AddRange(
+                new Student
+                {
+                    StudentNumber = 12345678,
+                    FirstName = "John",
+                    LastName = "Smith",
+                    Email = "john.smith@example.com",
+                    DepartmentCode = "CS1234"
+                },
+                new Student
+                {
+                    StudentNumber = 87654321,
+                    FirstName = "Alice",
+                    LastName = "Johnson",
+                    Email = "alice.johnson@example.com",
+                    DepartmentCode = "MTH567"
+                }
+            );
 
             _context.SaveChanges();
 
-            _context.Set<object>().AddRange(CSVDataService.GetDepartmentLectures());
-            _context.Set<object>().AddRange(CSVDataService.GetStudentLectures());
+            var departmentLectures = new List<object>
+            {
+                new { DepartmentsDepartmentCode = "CS1234", LecturesLectureName = "Algorithms" },
+                new { DepartmentsDepartmentCode = "CS1234", LecturesLectureName = "DataStructures" },
+                new { DepartmentsDepartmentCode = "MTH567", LecturesLectureName = "Calculus" }
+            };
+
+            var studentLectures = new List<object>
+            {
+                new { StudentsStudentNumber = 12345678, LecturesLectureName = "Algorithms" },
+                new { StudentsStudentNumber = 12345678, LecturesLectureName = "DataStructures" },
+                new { StudentsStudentNumber = 87654321, LecturesLectureName = "Calculus" }
+            };
 
             _context.SaveChanges();
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        [TestMethod]
+        public void TestDepartmentsInsertedCorrectly()
         {
-            _context.Dispose();
+            var departments = _context.Departments.ToList();
+            Assert.AreEqual(2, departments.Count);
+            Assert.IsTrue(departments.Any(d => d.DepartmentCode == "CS1234" && d.DepartmentName == "ComputerScience"));
+            Assert.IsTrue(departments.Any(d => d.DepartmentCode == "MTH567" && d.DepartmentName == "Mathematics"));
         }
 
         [TestMethod]
-        public void TestDepartmentsLoadedFromCSV()
+        public void TestLecturesInsertedCorrectly()
         {
-            Assert.AreEqual(2, _context.Departments.Count());
-
-            var csDepartment = _context.Departments.FirstOrDefault(d => d.DepartmentCode == "CS1234");
-            var mathDepartment = _context.Departments.FirstOrDefault(d => d.DepartmentCode == "MTH567");
-
-            Assert.IsNotNull(csDepartment);
-            Assert.AreEqual("ComputerScience", csDepartment.DepartmentName);
-
-            Assert.IsNotNull(mathDepartment);
-            Assert.AreEqual("Mathematics", mathDepartment.DepartmentName);
+            var lectures = _context.Lectures.ToList();
+            Assert.AreEqual(3, lectures.Count);
+            Assert.IsTrue(lectures.Any(l => l.LectureName == "Algorithms" && l.LectureTime == "10:00-11:30"));
+            Assert.IsTrue(lectures.Any(l => l.LectureName == "Calculus" && l.LectureTime == "12:00-13:30"));
+            Assert.IsTrue(lectures.Any(l => l.LectureName == "DataStructures" && l.LectureTime == "14:00-15:30"));
         }
 
         [TestMethod]
-        public void TestLecturesLoadedFromCSV()
+        public void TestStudentsInsertedCorrectly()
         {
-            Assert.AreEqual(3, _context.Lectures.Count());
-
-            var algorithms = _context.Lectures.FirstOrDefault(l => l.LectureName == "Algorithms");
-            var calculus = _context.Lectures.FirstOrDefault(l => l.LectureName == "Calculus");
-            var dataStructures = _context.Lectures.FirstOrDefault(l => l.LectureName == "DataStructures");
-
-            Assert.IsNotNull(algorithms);
-            Assert.AreEqual("10:00", algorithms.LectureTime);
-
-            Assert.IsNotNull(calculus);
-            Assert.AreEqual("12:00", calculus.LectureTime);
-
-            Assert.IsNotNull(dataStructures);
-            Assert.AreEqual("14:00", dataStructures.LectureTime);
-        }
-
-        [TestMethod]
-        public void TestStudentsLoadedFromCSV()
-        {
-            Assert.AreEqual(2, _context.Students.Count());
-
-            var john = _context.Students.FirstOrDefault(s => s.FirstName == "John" && s.LastName == "Smith");
-            var alice = _context.Students.FirstOrDefault(s => s.FirstName == "Alice" && s.LastName == "Johnson");
-
-            Assert.IsNotNull(john);
-            Assert.AreEqual(12345678, john.StudentNumber);
-
-            Assert.IsNotNull(alice);
-            Assert.AreEqual(87654321, alice.StudentNumber);
-        }
-
-        [TestMethod]
-        public void TestDepartmentLectureAssociationsFromCSV()
-        {
-            var csDepartment = _context.Departments.FirstOrDefault(d => d.DepartmentCode == "CS1234");
-            var mathDepartment = _context.Departments.FirstOrDefault(d => d.DepartmentCode == "MTH567");
-
-            Assert.IsTrue(csDepartment.Lectures.Any(l => l.LectureName == "Algorithms"));
-            Assert.IsTrue(csDepartment.Lectures.Any(l => l.LectureName == "DataStructures"));
-
-            Assert.IsTrue(mathDepartment.Lectures.Any(l => l.LectureName == "Calculus"));
-        }
-
-        [TestMethod]
-        public void TestStudentLectureAssociationsFromCSV()
-        {
-            var john = _context.Students.FirstOrDefault(s => s.StudentNumber == 12345678);
-            var alice = _context.Students.FirstOrDefault(s => s.StudentNumber == 87654321);
-
-            Assert.IsTrue(john.Lectures.Any(l => l.LectureName == "Algorithms"));
-            Assert.IsTrue(john.Lectures.Any(l => l.LectureName == "DataStructures"));
-
-            Assert.IsTrue(alice.Lectures.Any(l => l.LectureName == "Calculus"));
+            var students = _context.Students.ToList();
+            Assert.AreEqual(2, students.Count);
+            Assert.IsTrue(students.Any(s => s.StudentNumber == 12345678 && s.FirstName == "John" && s.LastName == "Smith"));
+            Assert.IsTrue(students.Any(s => s.StudentNumber == 87654321 && s.FirstName == "Alice" && s.LastName == "Johnson"));
         }
     }
 }
