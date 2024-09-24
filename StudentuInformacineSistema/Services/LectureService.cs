@@ -42,6 +42,7 @@ namespace StudentuInformacineSistema.Services
             _lectureRepository.UpdateLecture(lectureName, departmentCode);
             return true;
         }
+        
         public bool CreateLecture(Lecture lecture)
         {
             if (!ValidateLecture(lecture))

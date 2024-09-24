@@ -15,7 +15,7 @@ namespace StudentuInformacineSistema.Tests
         public void TestInitialize()
         {
             var options = new DbContextOptionsBuilder<StudentsContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabaseCSV")
+                .UseInMemoryDatabase(databaseName: "TestDataDatabase")
                 .Options;
 
             _context = new StudentsContext(options);
@@ -98,3 +98,24 @@ namespace StudentuInformacineSistema.Tests
         }
     }
 }
+
+
+
+
+
+/*
+Kai įrašomi departamentų duomenys iš departments.csv
+- Sukurti du departamentai su kodais CS1234 ir MTH567
+- Departamentų pavadinimai turi būti ComputerScience ir Mathematics
+Kai įrašomi paskaitų duomenys iš lectures.csv, duomenys turi būti
+- Sukurtos trys paskaitos: Algorithms, Calculus, DataStructures.
+- Paskaitų laikai turi būti 10:00, 12:00, 14:00
+Kai įrašomi studentų duomenys iš students.csv, duomenys turi būti:
+- Sukurti du studentai: John Smith ir Alice Johnson.
+Kai įrašomi departamentų ir paskaitų asociacijų duomenys iš department_lectures.csv, duomenys turi būti:
+- Departamentas CS1234 turi būti susietas su paskaitomis Algorithms ir DataStructures.
+- Departamentas MTH567 turi būti susietas su paskaitomis Calculus.
+Kai įrašomi studentų ir paskaitų asociacijų duomenys iš student_lectures.csv, duomenys turi būti:
+- Studentas 12345678 (John Smith) turi būti užregistruotas į paskaitas Algorithms ir DataStructures.
+- Studentas 87654321 (Alice Johnson) turi būti užregistruotas į paskaitą Calculus.
+*/

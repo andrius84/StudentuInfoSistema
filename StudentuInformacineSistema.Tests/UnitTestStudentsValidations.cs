@@ -15,7 +15,7 @@ namespace StudentuInformacineSistema.Tests
         public void TestInitialize()
         {
             var options = new DbContextOptionsBuilder<StudentsContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "TestStudentDatabase")
                 .Options;
 
             _context = new StudentsContext(options);
@@ -326,5 +326,69 @@ namespace StudentuInformacineSistema.Tests
             // Assert
             Assert.IsTrue(result, "Studentas su tokiu el. paðtu jau egzistuoja");
         }
+
+        [TestMethod]
+        public void AssignStudent_NonExistentDepartment_ShouldReturnFalse()
+        {
+            var student = new Student
+            {
+                StudentNumber = 12345679,
+                FirstName = "John",
+                LastName = "Smith",
+                Email = "alice.johnson@example.com",
+                DepartmentCode = "ENG999" // neegzistuojantis departamentas
+            };
+
+            var result = _studentService.AddDepartmentToStudent(studentNumber: 12345679, departmentCode: "ENG999");
+
+            Assert.IsFalse(result, "Studentas negali bûti priskirtas á neegzituojantá departamentà");
+        }
+
+        [TestMethod]
+        public void TransferStudent_ToAnotherDepartment_ShouldUpdateTrue()
+        {
+            //var student = new Student
+            //{
+            //    StudentNumber = 12345678,
+            //    FirstName = "Alice",
+            //    LastName = "Johnson",
+            //    Email = "alice.johnson@example.com",
+            //    DepartmentCode = "CS1234"
+            //};
+            //_context.Students.Add(student);
+            //_context.SaveChanges();
+
+            var result = _studentService.AddDepartmentToStudent(studentNumber: 12345678, departmentCode: "MTH567");
+
+            Assert.IsTrue(result, "Studentas perkeltas sëkmingai");
+        }
     }
 }
+
+/*
+  
+   -Jei paduodami studento vardas "Jo1n" ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti sudarytas tik ið raidþiø.
+   - Jei paduodami studento vardas "J" ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti ne trumpesnis kaip 2 simboliai.
+   - Jei paduodami studento vardas "JohnathonJohnathonJohnathonJohnathonJohnathon" (51 simbolis) ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti ne ilgesnis kaip 50 simboliø.
+   - Jei paduodami studento vardas "John" ir pavardë "Sm!th", tai gaunama klaida, nes pavardë turi bûti sudaryta tik ið raidþiø.
+   - Jei paduodami studento numeris "1234567" (7 skaitmenys), tai gaunama klaida, nes numeris turi bûti tiksliai 8 simboliø ilgio.
+   - Jei paduodami studento numeris "123456789" (9 skaitmenys), tai gaunama klaida, nes numeris turi bûti tiksliai 8 simboliø ilgio.
+   - Jei paduodami studento numeris "1234ABCD", tai gaunama klaida, nes numeris turi bûti sudarytas tik ið skaièiø.
+   - Jei paduodami studento numeris "12345678", kuris jau egzistuoja duomenø bazëje, tai gaunama klaida dël numerio unikalumo paþeidimo.
+   - Jei paduodami studento numeris "ABC" (3 simboliai), tai gaunama 2 klaidos, (1)numeris turi bûti tiksliai 8 simboliø ilgio,  (2)numeris turi bûti sudarytas tik ið skaièiø.
+   - Jei paduodami studento el. paðtas "john.smithexample.com" (trûksta @), tai gaunama klaida, nes el. paðtas turi bûti teisingo formato.
+   - Jei paduodami studento el. paðtas "john.smith@" (trûksta domeno), tai gaunama klaida dël netinkamo formato.
+   - Jei paduodami studento el. paðtas "@example.com" (trûksta vietovardþio), tai gaunama klaida dël netinkamo formato.
+   - Jei paduodami studento el. paðtas "john.smith@example" (trûksta domeno pabaigos), tai gaunama klaida dël netinkamo formato.
+   - Jei paduodami studento el. paðtas "john.smith@example." (trûksta domeno pabaigos), tai gaunama klaida dël netinkamo formato.
+   - Jei nepaduodamas studento el. paðtas, tai gaunama klaida, nes el. paðtas yra privalomas.
+   - Jei nepaduodamas studento Departamentas, tai gaunama klaida, nes Departamentas yra privalomas.
+   - Jei paduodami studento vardas tuðèias """ arba null, tai gaunama klaida, nes vardas yra privalomas laukas.
+   - Jei paduodami du studentai su tuo paèiu el. paðto adresu "alice.johnson@example.com", tai gaunama klaida dël el. paðto unikalumo paþeidimo.
+
+   - Jei paduodami studentas su numeriu "12345679" priskiriamas departamentui su kodu "ENG999", kuris neegzistuoja, tai gaunama klaida dël neegzistuojanèio departamento.
+   - Jei paduodami studentas ið departamento "CS1234" priskiriamas paskaitai "Calculus", kuri nepriklauso jo departamentui, tai gaunama klaida.
+   - Jei paduodami studentas su numeriu "12345678" perkeliamas á departamentà su kodu "MTH567", tai gaunama sëkmingas perkëlimas, o jo paskaitos atnaujinamos pagal naujà departamentà (jei toks funkcionalumas numatytas).
+   - Jei paduodami studentas su numeriu "12345678" perkeliamas á neegzistuojantá departamentà "ENG999", tai gaunama klaida dël neegzistuojanèio departamento.
+
+*/
