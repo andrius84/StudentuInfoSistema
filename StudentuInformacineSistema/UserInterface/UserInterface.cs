@@ -155,6 +155,9 @@ namespace StudentuInformacineSistema.UserInterface
             Console.WriteLine("Įveskite studento el. paštą:");
             student.Email = Console.ReadLine();
 
+            Console.WriteLine("Įveskite departamento kodą:");
+            student.DepartmentCode = Console.ReadLine();
+
             var check = _studentService.CreateStudent(student);
 
             if (check)

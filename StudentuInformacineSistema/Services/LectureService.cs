@@ -38,8 +38,12 @@ namespace StudentuInformacineSistema.Services
         }
 
         public bool AddLectureToDepartment(string lectureName, string departmentCode)
-        {
-            _lectureRepository.UpdateLecture(lectureName, departmentCode);
+        {        
+            var isUpdated = _lectureRepository.UpdateLecture(lectureName, departmentCode);
+            if (!isUpdated)
+            {
+                return false;
+            }
             return true;
         }
         

@@ -12,7 +12,7 @@ namespace StudentuInformacineSistema.Database.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string? DepartmentCode { get; set; }
+        public string DepartmentCode { get; set; }
 
         // Navigacine savybes
         public Department Department { get; set; } 

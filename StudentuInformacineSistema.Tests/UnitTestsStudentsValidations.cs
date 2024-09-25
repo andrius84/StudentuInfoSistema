@@ -6,7 +6,7 @@ using StudentuInformacineSistema.Services;
 namespace StudentuInformacineSistema.Tests
 {
     [TestClass]
-    public class StudentServiceTests
+    public class UnitTestsStudentsValidations
     {
         private StudentsContext _context;
         private StudentService _studentService;
@@ -15,11 +15,11 @@ namespace StudentuInformacineSistema.Tests
         public void TestInitialize()
         {
             var options = new DbContextOptionsBuilder<StudentsContext>()
-                .UseInMemoryDatabase(databaseName: "TestStudentDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
                 .Options;
 
             _context = new StudentsContext(options);
-            _context.Database.EnsureCreated();
+            _context.Database.EnsureCreated(); 
 
             var studentRepository = new StudentRepository(_context); 
             _studentService = new StudentService(studentRepository);
@@ -28,19 +28,21 @@ namespace StudentuInformacineSistema.Tests
         [TestCleanup]
         public void TestCleanup()
         {
-            _context.Database.EnsureDeleted();
+            _context.Database.EnsureDeleted(); 
             _context.Dispose();
         }
 
         [TestMethod]
         public void CreateStudent_InvalidFirstNameWithNumber_ShouldReturnFalse()
         {
+            // Arrange
             var student = new Student
             {
                 FirstName = "Jo1n", // Neteisingas simbolis varde
                 LastName = "Smith",
                 StudentNumber = 12345678,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -59,7 +61,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "J", // Per trumpas vardas
                 LastName = "Smith",
                 StudentNumber = 12345679,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -78,7 +81,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "JohnathonJohnathonJohnathonJohnathonJohnathodfgagfdfn", // Per ilgas vardas
                 LastName = "Smith",
                 StudentNumber = 12345680,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -97,7 +101,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "John",
                 LastName = "Sm!th", // Neteisingas simbolis pavardëje
                 StudentNumber = 12345681,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -115,7 +120,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "John",
                 LastName = "Smith",
                 StudentNumber = 1234567, // 7 skaitmenys, per trumpas studento numeris
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -130,10 +136,11 @@ namespace StudentuInformacineSistema.Tests
             // Arrange
             var student = new Student
             {
+                StudentNumber = 123456789, // 9 skaitmenys, per ilgas studento numeris
                 FirstName = "John",
                 LastName = "Smith",
-                StudentNumber = 123456789, // 9 skaitmenys, per ilgas studento numeris
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256",
             };
 
             // Act
@@ -141,101 +148,6 @@ namespace StudentuInformacineSistema.Tests
 
             // Assert
             Assert.IsFalse(result, "Per ilgas studento numeris");
-        }
-
-        [TestMethod]
-        public void CreateStudent_StudentNumberWithLetters_ShouldReturnFalse()
-        {
-            // Arrange
-            var student = new Student
-            {
-                FirstName = "John",
-                LastName = "Smith",
-                StudentNumber = int.Parse("1234ABCD"), // Studento numeris su raidëmis
-                Email = "john.smith@example.com"
-            };
-
-            // Act
-            var result = _studentService.CreateStudent(student);
-
-            // Assert
-            Assert.IsFalse(result, "Studento numeris su raidëmis");
-        }
-
-        [TestMethod]
-        public void CreateStudent_InvalidEmailWithoutAtSymbol_ShouldReturnFalse()
-        {
-            // Arrange
-            var student = new Student
-            {
-                FirstName = "John",
-                LastName = "Smith",
-                StudentNumber = 12345678,
-                Email = "john.smithexample.com" // Trûksta '@' simbolio elektroninio paðto adrese
-            };
-
-            // Act
-            var result = _studentService.CreateStudent(student);
-
-            // Assert
-            Assert.IsFalse(result, "Trûksta '@' simbolio elektroninio paðto adrese");
-        }
-
-        [TestMethod]
-        public void CreateStudent_InvalidEmailWithoutDomain_ShouldReturnFalse()
-        {
-            // Arrange
-            var student = new Student
-            {
-                FirstName = "John",
-                LastName = "Smith",
-                StudentNumber = 12345678,
-                Email = "john.smith@" // Trûksta domeno elektroninio paðto adrese
-            };
-
-            // Act
-            var result = _studentService.CreateStudent(student);
-
-            // Assert
-            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
-        }
-
-        [TestMethod]
-        public void CreateStudent_InvalidEmailWithoutTld_ShouldReturnFalse()
-        {
-            // Arrange
-            var student = new Student
-            {
-                FirstName = "John",
-                LastName = "Smith",
-                StudentNumber = 12345678,
-                Email = "john.smith@example" // Trûksta domeno elektroninio paðto adrese
-            };
-
-            // Act
-            var result = _studentService.CreateStudent(student);
-
-            // Assert
-            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
-        }
-
-        [TestMethod]
-        public void CreateStudent_InvalidEmailWithIncompleteTld_ShouldReturnFalse()
-        {
-            // Arrange
-            var student = new Student
-            {
-                FirstName = "John",
-                LastName = "Smith",
-                StudentNumber = 12345678,
-                Email = "john.smith@example." // Trûksta domeno elektroninio paðto adrese
-            };
-
-            // Act
-            var result = _studentService.CreateStudent(student);
-
-            // Assert
-            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
         }
 
         [TestMethod]
@@ -247,7 +159,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "", // Tuðèias vardas
                 LastName = "Smith",
                 StudentNumber = 12345678,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -266,7 +179,8 @@ namespace StudentuInformacineSistema.Tests
                 FirstName = "John",
                 LastName = "", //Tuðèia pavardë
                 StudentNumber = 12345678,
-                Email = "john.smith@example.com"
+                Email = "john.smith@example.com",
+                DepartmentCode = "KA1256"
             };
 
             // Act
@@ -274,6 +188,86 @@ namespace StudentuInformacineSistema.Tests
 
             // Assert
             Assert.IsFalse(result, "LastName yra privalomas");
+        }
+
+        [TestMethod]
+        public void CreateStudent_InvalidEmailWithoutAtSymbol_ShouldReturnFalse()
+        {
+            // Arrange
+            var student = new Student
+            {
+                FirstName = "John",
+                LastName = "Smith",
+                StudentNumber = 12345678,
+                Email = "john.smithexample.com", // Trûksta '@' simbolio elektroninio paðto adrese
+                DepartmentCode = "KA1256"
+            };
+
+            // Act
+            var result = _studentService.CreateStudent(student);
+
+            // Assert
+            Assert.IsFalse(result, "Trûksta '@' simbolio elektroninio paðto adrese");
+        }
+
+        [TestMethod]
+        public void CreateStudent_InvalidEmailWithoutDomain_ShouldReturnFalse()
+        {
+            // Arrange
+            var student = new Student
+            {
+                FirstName = "John",
+                LastName = "Smith",
+                StudentNumber = 12345678,
+                Email = "john.smith@", // Trûksta domeno elektroninio paðto adrese
+                DepartmentCode = "KA1256"
+            };
+
+            // Act
+            var result = _studentService.CreateStudent(student);
+
+            // Assert
+            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
+        }
+
+        [TestMethod]
+        public void CreateStudent_InvalidEmailWithoutTld_ShouldReturnFalse()
+        {
+            // Arrange
+            var student = new Student
+            {
+                FirstName = "John",
+                LastName = "Smith",
+                StudentNumber = 12345678,
+                Email = "john.smith@example", // Trûksta domeno elektroninio paðto adrese
+                DepartmentCode = "KA1256"
+            };
+
+            // Act
+            var result = _studentService.CreateStudent(student);
+
+            // Assert
+            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
+        }
+
+        [TestMethod]
+        public void CreateStudent_InvalidEmailWithIncompleteTld_ShouldReturnFalse()
+        {
+            // Arrange
+            var student = new Student
+            {
+                FirstName = "John",
+                LastName = "Smith",
+                StudentNumber = 12345678,
+                Email = "john.smith@example.", // Trûksta domeno elektroninio paðto adrese
+                DepartmentCode = "KA1256"
+            };
+
+            // Act
+            var result = _studentService.CreateStudent(student);
+
+            // Assert
+            Assert.IsFalse(result, "Trûksta domeno elektroninio paðto adrese");
         }
 
         [TestMethod]
@@ -339,27 +333,29 @@ namespace StudentuInformacineSistema.Tests
                 DepartmentCode = "ENG999" // neegzistuojantis departamentas
             };
 
+            // Act
             var result = _studentService.AddDepartmentToStudent(studentNumber: 12345679, departmentCode: "ENG999");
-
+           
+            // Assert
             Assert.IsFalse(result, "Studentas negali bûti priskirtas á neegzituojantá departamentà");
         }
 
         [TestMethod]
         public void TransferStudent_ToAnotherDepartment_ShouldUpdateTrue()
         {
-            //var student = new Student
-            //{
-            //    StudentNumber = 12345678,
-            //    FirstName = "Alice",
-            //    LastName = "Johnson",
-            //    Email = "alice.johnson@example.com",
-            //    DepartmentCode = "CS1234"
-            //};
-            //_context.Students.Add(student);
-            //_context.SaveChanges();
+            var student = new Student
+            {
+                StudentNumber = 12345678,
+                FirstName = "Alice",
+                LastName = "Johnson",
+                Email = "alice.johnson@example.com",
+                DepartmentCode = "CS1234"
+            };
 
+            // Act
             var result = _studentService.AddDepartmentToStudent(studentNumber: 12345678, departmentCode: "MTH567");
-
+            
+            // Assert
             Assert.IsTrue(result, "Studentas perkeltas sëkmingai");
         }
     }
@@ -367,7 +363,7 @@ namespace StudentuInformacineSistema.Tests
 
 /*
   
-   -Jei paduodami studento vardas "Jo1n" ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti sudarytas tik ið raidþiø.
+   - Jei paduodami studento vardas "Jo1n" ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti sudarytas tik ið raidþiø.
    - Jei paduodami studento vardas "J" ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti ne trumpesnis kaip 2 simboliai.
    - Jei paduodami studento vardas "JohnathonJohnathonJohnathonJohnathonJohnathon" (51 simbolis) ir pavardë "Smith", tai gaunama klaida, nes vardas turi bûti ne ilgesnis kaip 50 simboliø.
    - Jei paduodami studento vardas "John" ir pavardë "Sm!th", tai gaunama klaida, nes pavardë turi bûti sudaryta tik ið raidþiø.
@@ -376,16 +372,17 @@ namespace StudentuInformacineSistema.Tests
    - Jei paduodami studento numeris "1234ABCD", tai gaunama klaida, nes numeris turi bûti sudarytas tik ið skaièiø.
    - Jei paduodami studento numeris "12345678", kuris jau egzistuoja duomenø bazëje, tai gaunama klaida dël numerio unikalumo paþeidimo.
    - Jei paduodami studento numeris "ABC" (3 simboliai), tai gaunama 2 klaidos, (1)numeris turi bûti tiksliai 8 simboliø ilgio,  (2)numeris turi bûti sudarytas tik ið skaièiø.
+   
    - Jei paduodami studento el. paðtas "john.smithexample.com" (trûksta @), tai gaunama klaida, nes el. paðtas turi bûti teisingo formato.
    - Jei paduodami studento el. paðtas "john.smith@" (trûksta domeno), tai gaunama klaida dël netinkamo formato.
    - Jei paduodami studento el. paðtas "@example.com" (trûksta vietovardþio), tai gaunama klaida dël netinkamo formato.
    - Jei paduodami studento el. paðtas "john.smith@example" (trûksta domeno pabaigos), tai gaunama klaida dël netinkamo formato.
    - Jei paduodami studento el. paðtas "john.smith@example." (trûksta domeno pabaigos), tai gaunama klaida dël netinkamo formato.
    - Jei nepaduodamas studento el. paðtas, tai gaunama klaida, nes el. paðtas yra privalomas.
+   
    - Jei nepaduodamas studento Departamentas, tai gaunama klaida, nes Departamentas yra privalomas.
    - Jei paduodami studento vardas tuðèias """ arba null, tai gaunama klaida, nes vardas yra privalomas laukas.
    - Jei paduodami du studentai su tuo paèiu el. paðto adresu "alice.johnson@example.com", tai gaunama klaida dël el. paðto unikalumo paþeidimo.
-
    - Jei paduodami studentas su numeriu "12345679" priskiriamas departamentui su kodu "ENG999", kuris neegzistuoja, tai gaunama klaida dël neegzistuojanèio departamento.
    - Jei paduodami studentas ið departamento "CS1234" priskiriamas paskaitai "Calculus", kuri nepriklauso jo departamentui, tai gaunama klaida.
    - Jei paduodami studentas su numeriu "12345678" perkeliamas á departamentà su kodu "MTH567", tai gaunama sëkmingas perkëlimas, o jo paskaitos atnaujinamos pagal naujà departamentà (jei toks funkcionalumas numatytas).

@@ -7,6 +7,7 @@ using StudentuInformacineSistema.Database.Entities;
 using StudentuInformacineSistema.Services.Interfaces;
 using StudentuInformacineSistema.Database.Repositories.Interfaces;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace StudentuInformacineSistema.Services
 {
@@ -68,6 +69,11 @@ namespace StudentuInformacineSistema.Services
         // Validacija studento sukūrimui ir atnaujinimui
         private bool ValidateStudent(Student student)
         {
+            var existingStudent = _studentRepository.GetStudent(student.StudentNumber);
+            if (existingStudent != null)
+            {
+                return false;   
+            }
             // FirstName validacija
             if (string.IsNullOrWhiteSpace(student.FirstName) ||
                 !Regex.IsMatch(student.FirstName, @"^[a-zA-Z]+$") ||
@@ -92,6 +98,10 @@ namespace StudentuInformacineSistema.Services
                 !Regex.IsMatch(student.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 return false; 
+            }
+            if (student.DepartmentCode == null) 
+            {
+                return false;
             }
 
             return true;

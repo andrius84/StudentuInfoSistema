@@ -19,13 +19,15 @@ namespace StudentuInformacineSistema.Tests
         [TestInitialize]
         public void TestInitialize()
         {
+            // Use a fresh in-memory database for each test
             var options = new DbContextOptionsBuilder<StudentsContext>()
-                .UseInMemoryDatabase(databaseName: "TestDepartmentDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Ensure unique database per test
                 .Options;
 
             _context = new StudentsContext(options);
-            _context.Database.EnsureCreated();
+            _context.Database.EnsureCreated(); // Optional but good to ensure
 
+            // Initialize repository and service
             var departmentRepository = new DepartmentRepository(_context);
             _departmentService = new DepartmentService(departmentRepository);
         }
@@ -33,11 +35,12 @@ namespace StudentuInformacineSistema.Tests
         [TestCleanup]
         public void TestCleanup()
         {
-            _context.Database.EnsureDeleted();
+            // Ensure database is deleted and context is disposed after each test
+            _context.Database.EnsureDeleted(); // Deletes the in-memory database
             _context.Dispose();
         }
 
-        [TestMethod]
+    [TestMethod]
         public void CreateDepartment_ShortName_ShouldReturnFalse()
         {
             var department = new Department
@@ -101,7 +104,6 @@ namespace StudentuInformacineSistema.Tests
                 DepartmentCode = "CS1234",
                 DepartmentName = "Computer Science"
             });
-            _context.SaveChanges();
 
             var duplicateDepartment = new Department
             {
